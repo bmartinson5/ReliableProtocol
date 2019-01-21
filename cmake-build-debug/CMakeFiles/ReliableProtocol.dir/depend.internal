@@ -3,14 +3,18 @@
 
 CMakeFiles/ReliableProtocol.dir/Client.cpp.o
  /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Client.cpp
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.h
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/SocketAction.h
 CMakeFiles/ReliableProtocol.dir/Packet.cpp.o
  /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.cpp
  /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.h
 CMakeFiles/ReliableProtocol.dir/Server.cpp.o
- /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.cpp
- /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.h
-CMakeFiles/ReliableProtocol.dir/main.cpp.o
- /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Client.h
  /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.h
- /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.h
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.cpp
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/SocketAction.h
+CMakeFiles/ReliableProtocol.dir/SocketAction.cpp.o
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/SocketAction.cpp
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/SocketAction.h
+CMakeFiles/ReliableProtocol.dir/main.cpp.o
+ /Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.h
  /Users/benjaminmartinson/CLionProjects/ReliableProtocol/main.cpp

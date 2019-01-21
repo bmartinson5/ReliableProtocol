@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/ReliableProtocol.dir/Packet.cpp.o"
   "CMakeFiles/ReliableProtocol.dir/Client.cpp.o"
   "CMakeFiles/ReliableProtocol.dir/Server.cpp.o"
+  "CMakeFiles/ReliableProtocol.dir/SocketAction.cpp.o"
   "ReliableProtocol.pdb"
   "ReliableProtocol"
 )

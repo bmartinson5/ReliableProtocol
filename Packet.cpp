@@ -21,7 +21,13 @@ void serializer(char* p, T toCopyInt, int &off)
     off += size;
 }
 
-
+int Packet::Size(char * packet)
+{
+    int count = 0;
+    while(packet[count] != '\0')
+        ++count;
+    return count;
+}
 
 char* Connection::serialize()
 {

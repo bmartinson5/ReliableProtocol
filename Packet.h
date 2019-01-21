@@ -14,11 +14,13 @@ using namespace std;
 class Packet {
 protected:
     char type;
+    int size;
 
 public:
     Packet(char type) : type(type){};
 
     char* Type() { return &type; };
+    int Size(char*); //returns size of serialized packet
     virtual char* serialize(){ return &type; };
 
 

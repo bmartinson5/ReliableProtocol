@@ -100,6 +100,12 @@
 		<Unit filename="/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.h">
 			<Option target="ReliableProtocol"/>
 		</Unit>
+		<Unit filename="/Users/benjaminmartinson/CLionProjects/ReliableProtocol/SocketAction.cpp">
+			<Option target="ReliableProtocol"/>
+		</Unit>
+		<Unit filename="/Users/benjaminmartinson/CLionProjects/ReliableProtocol/SocketAction.h">
+			<Option target="ReliableProtocol"/>
+		</Unit>
 		<Unit filename="/Users/benjaminmartinson/CLionProjects/ReliableProtocol/main.cpp">
 			<Option target="ReliableProtocol"/>
 		</Unit>

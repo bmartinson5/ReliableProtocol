@@ -204,6 +204,33 @@ Server.cpp.s:
 	$(MAKE) -f CMakeFiles/ReliableProtocol.dir/build.make CMakeFiles/ReliableProtocol.dir/Server.cpp.s
 .PHONY : Server.cpp.s
 
+SocketAction.o: SocketAction.cpp.o
+
+.PHONY : SocketAction.o
+
+# target to build an object file
+SocketAction.cpp.o:
+	$(MAKE) -f CMakeFiles/ReliableProtocol.dir/build.make CMakeFiles/ReliableProtocol.dir/SocketAction.cpp.o
+.PHONY : SocketAction.cpp.o
+
+SocketAction.i: SocketAction.cpp.i
+
+.PHONY : SocketAction.i
+
+# target to preprocess a source file
+SocketAction.cpp.i:
+	$(MAKE) -f CMakeFiles/ReliableProtocol.dir/build.make CMakeFiles/ReliableProtocol.dir/SocketAction.cpp.i
+.PHONY : SocketAction.cpp.i
+
+SocketAction.s: SocketAction.cpp.s
+
+.PHONY : SocketAction.s
+
+# target to generate assembly for a file
+SocketAction.cpp.s:
+	$(MAKE) -f CMakeFiles/ReliableProtocol.dir/build.make CMakeFiles/ReliableProtocol.dir/SocketAction.cpp.s
+.PHONY : SocketAction.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -249,6 +276,9 @@ help:
 	@echo "... Server.o"
 	@echo "... Server.i"
 	@echo "... Server.s"
+	@echo "... SocketAction.o"
+	@echo "... SocketAction.i"
+	@echo "... SocketAction.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
