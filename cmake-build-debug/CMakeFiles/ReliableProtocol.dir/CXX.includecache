@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Client.h
+iostream
+-
+
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.h
+string
+-
+vector
+-
+iostream
+-
+
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.h
+iostream
+-
+
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/main.cpp
+pthread.h
+-
+iostream
+-
+Packet.h
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Packet.h
+Server.h
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Server.h
+Client.h
+/Users/benjaminmartinson/CLionProjects/ReliableProtocol/Client.h
+
