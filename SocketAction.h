@@ -10,6 +10,8 @@
 using namespace std;
 
 void createAddress(struct sockaddr_in &addr, int port);
+char * receiveMessage(int sockId, struct sockaddr_in &addr, char buffer[]);
+int checkError(int, string);
 
 template <typename T>
 int sendMessage(T &ptk, struct sockaddr_in &addr, int serverSocket)

@@ -17,30 +17,31 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-//struct sockaddr_in &createAddress(struct sockaddr_in addr, int port)
+struct sockaddr_in serv_addr;
+const int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
 
-int main(int argc, char *argv[])
+int establishConnection(string fileName)
 {
-    struct sockaddr_in serv_addr;
-    int port = atoi(argv[2]);
-
-    int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if(serverSocket< 0)
-    {
-        cout << "error opening socket" << endl;
-        return 1;
-    }
-
-    createAddress(serv_addr, port);
-
-    string fileName = argv[3];
     Connection connectionPacket(fileName.length(), fileName);
     sendMessage<Connection>(connectionPacket, serv_addr, serverSocket);
 
+    char reply[256];
+    receiveMessage(serverSocket, serv_addr, reply);
+}
+
+
+
+int main(int argc, char *argv[])
+{
+
+    checkError(serverSocket, "Error Opening Socket");
+
+    int port = atoi(argv[2]);
+    createAddress(serv_addr, port);
+
+    establishConnection(argv[3]);
+
     close(serverSocket);
-    return 0;
-
-
     return 0;
 }
 

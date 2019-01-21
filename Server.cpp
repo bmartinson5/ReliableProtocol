@@ -17,39 +17,47 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+
+int establishConnection(int sockId, struct sockaddr_in cli_addr)
+{
+    char reply[256];
+    //listen for clients initial connection
+    receiveMessage(sockId, cli_addr, reply);
+
+    //Reply that connection has been made
+    Connection connectionPacket(5, {"hello"});
+    sendMessage<Connection>(connectionPacket, cli_addr, sockId);
+}
+
+
+
 int main(int argc, char *argv[])
 {
 
-    char buffer[256];
-    int serverSocket, newServerSocket, port, n;
+    //setup socket
+    int sockId, newsockId, port, n;
     struct sockaddr_in serv_addr, cli_addr;
-    serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
-
-    if(serverSocket < 0)
-    {
-        cout << "error opening socket" << endl;
-        return 1;
-    }
-
     port = atoi(argv[2]);
+
+    //open socket
+    sockId = socket(AF_INET, SOCK_DGRAM, 0);
+    checkError(sockId, "Error Opening Socket");
+
     createAddress(serv_addr, port);
 
-    int status = ::bind(serverSocket, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
-    if(status < 0)
-    {
-        cout << "error binding address" << endl;
-    }
-
+    //bind to port
+    int status = ::bind(sockId, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+    checkError(status, "Error Binding");
     cout << endl << "Server running on port: " << port << endl;
 
-    char * packet;
-    socklen_t len;
-    int recieved = ::recvfrom(serverSocket, (char *) buffer, 256, MSG_WAITALL, (struct sockaddr *) &cli_addr, &len);
-    buffer[recieved] = '\0';
+    //start listening for client
+    establishConnection(sockId, cli_addr);
 
-    cout << "Server received packet: " << buffer << endl;
+    //start sending data
 
-    close(serverSocket);
+
+
+    close(sockId);
     return 0;
 
 
