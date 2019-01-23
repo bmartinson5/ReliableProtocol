@@ -22,8 +22,9 @@ const int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
 
 int establishConnection(string fileName)
 {
+    //create first connection packet and send it to the server
     Connection connectionPacket(fileName.length(), fileName);
-    sendMessage<Connection>(connectionPacket, serv_addr, serverSocket);
+    sendMessage(connectionPacket.SerialPacket(), connectionPacket.Size(), serv_addr, serverSocket);
 
     char reply[256];
     receiveMessage(serverSocket, serv_addr, reply);
@@ -33,7 +34,6 @@ int establishConnection(string fileName)
 
 int main(int argc, char *argv[])
 {
-
     checkError(serverSocket, "Error Opening Socket");
 
     int port = atoi(argv[2]);

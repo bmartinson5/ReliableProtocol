@@ -25,8 +25,9 @@ int establishConnection(int sockId, struct sockaddr_in cli_addr)
     receiveMessage(sockId, cli_addr, reply);
 
     //Reply that connection has been made
-    Connection connectionPacket(5, {"hello"});
-    sendMessage<Connection>(connectionPacket, cli_addr, sockId);
+//    Connection connectionPacket(5, {"hello"});
+//    sendMessage<Connection>(connectionPacket, cli_addr, sockId);
+    return 0;
 }
 
 
@@ -48,7 +49,7 @@ int main(int argc, char *argv[])
     //bind to port
     int status = ::bind(sockId, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
     checkError(status, "Error Binding");
-    cout << endl << "Server running on port: " << port << endl;
+    cout << endl << "Server running on port: " << argv[2] << endl;
 
     //start listening for client
     establishConnection(sockId, cli_addr);
