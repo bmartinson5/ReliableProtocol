@@ -46,7 +46,7 @@ void DataPacket::serialize()
     serializer<int>(seqNum);
     serializer<int>(pktLength);
     serializer<string>(data, pktLength);
-    cout << "packet = " << (pack + 9) << endl;
+    //cout << "packet = " << (pack + 9) << endl;
     //also need data
 }
 

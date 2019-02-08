@@ -37,9 +37,9 @@ bool checkFile(string fileName)
 
 bool readDataAndSend(int sockId, struct  sockaddr_in &cli_addr, string fileName, int len)
 {
-    //ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.jpg", ios::binary);
-    ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.txt", ios::binary);
-    char buffer[10];
+    ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.jpg", ios::binary);
+    //ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.txt", ios::binary);
+    char buffer[1024];
 
     int count = 0;
     while(file.read(buffer, sizeof(buffer)))
