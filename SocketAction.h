@@ -7,34 +7,16 @@
 
 #include <iostream>
 #include <netdb.h>
+
+#include "Packet.h"
 using namespace std;
 
-void createAddress(struct sockaddr_in &addr, int port);
-char * receiveMessage(int sockId, struct sockaddr_in &addr, char buffer[]);
-int checkError(int, string);
-int sendMessage(char *ptk, int, struct sockaddr_in &addr, int serverSocket);
+void createAddress(struct sockaddr_in &addr, const int port);
+void createAddress2(struct sockaddr_in &addr, const int port);
+int receiveMessage(Packet &, const int sockId, struct sockaddr_in &addr);
+int checkError(const int, const string);
+int sendMessage(Packet&, const struct sockaddr_in&, const int serverSocket, int);
 
-//template <typename T>
-//int sendMessage(T &ptk, struct sockaddr_in &addr, int serverSocket)
-//{
-//    char *packet = ptk.serialize();
-//    int ptkLen = ptk.Size(packet);
-//
-////    int secondParam;
-////    memcpy(&secondParam, (int *) packet+ 1, sizeof(secondParam));
-////    cout << "sec para m = " << secondParam << endl;
-//    //cout << "Sending to port: " << addr.sin_port << endl;
-//    int status = ::sendto(serverSocket, packet, ptkLen, 0, (const struct sockaddr *) &addr, sizeof(addr));
-//    if(status < 0)
-//    {
-//        cout << "Error sending message" << endl;
-//        return 1;
-//    }
-//    else
-//    {
-//        cout << "Message sent" << endl;
-//        return 0;
-//    }
-//}
+
 
 #endif //RELIABLEPROTOCOL_SOCKETACTION_H

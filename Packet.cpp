@@ -4,74 +4,84 @@
 
 #include "Packet.h"
 #include <iostream>
+#include <string>
 
-
-//to_string doesn't automatically overload string
-//string to_string(const string& value)
-//{
-//    return value;
-//}
-
-//template <typename T>
-////void serializer(char* p, T toCopyInt, int &off)
-////{
-////    int size = to_string(toCopyInt).length();
-////    char const * toC = to_string(toCopyInt).c_str();
-////    memcpy(p+off, toC, sizeof(char)*size);
-////    off += size;
-////}
-
+void Connection::deserialize(char * ptk)
+{
+    type = *ptk;
+    ptkLength = *(ptk+sizeof(char));
+    fileName = (ptk+sizeof(char)+sizeof(int));
+}
 
 void Connection::serialize()
 {
-    serializer<char>(type, offset);
-    serializer<int>(ptkLength, offset);
-    serializer<string>(fileName, offset, ptkLength);
+    serializer<char>(type);
+    serializer<int>(ptkLength);
+    serializer<string>(fileName, ptkLength);
 }
 
-//char* ConnectionReply::serialize()
-//{
-//    char *p = new char[sizeof(char) + sizeof(long)];
-//    int offset = 0;
-//    serializer<string>(p, string(1,type), offset);
-//    serializer<long>(p, fileSize, offset);
-//    return p;
-//}
-//
-//char* DataPacket::serialize()
-//{
-//    char *p = new char[sizeof(char) + sizeof(long)];
-//    int offset = 0;
-//    serializer<string>(p, string(1,type), offset);
-//    serializer<int>(p, seqNum, offset);
-//    serializer<int>(p, pktLength, offset);
-//    //also need raw data
-//    return p;
-//}
-//
-//char* DataReply::serialize()
-//{
-//    char *p = new char[sizeof(char) + sizeof(int)];
-//    int offset = 0;
-//    serializer<string>(p, string(1,type), offset);
-//    serializer<int>(p, seqNum, offset);
-//    return p;
-//}
-//
-//char* CloseConnection::serialize()
-//{
-//    char *p = new char[sizeof(char) + sizeof(int)];
-//    int offset = 0;
-//    serializer<string>(p, string(1,type), offset);
-//    serializer<int>(p, seqNum, offset);
-//    return p;
-//}
-//char* ReplyAck::serialize()
-//{
-//    char *p = new char[sizeof(char)];
-//    int offset = 0;
-//    serializer<string>(p, string(1,type), offset);
-//    return p;
-//
-//}
+void ConnectionReply::deserialize(char * ptk)
+{
+    type = *ptk;
+    fileSize = *(ptk+1);
+}
+
+void ConnectionReply::serialize()
+{
+    serializer<char>(type);
+    serializer<long>(fileSize);
+}
+
+void DataPacket::deserialize(char * ptk)
+{
+    type = *ptk;
+    seqNum = *(ptk+1);
+    pktLength = *(ptk+1+ sizeof(int));
+    data = (ptk+1+ sizeof(int)+sizeof(int));
+}
+
+void DataPacket::serialize()
+{
+    serializer<char>(type);
+    serializer<int>(seqNum);
+    serializer<int>(pktLength);
+    serializer<string>(data, pktLength);
+    cout << "packet = " << (pack + 9) << endl;
+    //also need data
+}
+
+void DataReply::deserialize(char * ptk)
+{
+    type = *ptk;
+    seqNum = *(ptk+1);
+}
+
+void DataReply::serialize()
+{
+    serializer<char>(type);
+    serializer<int>(seqNum);
+}
+
+void CloseConnection::deserialize(char * ptk)
+{
+    type = *ptk;
+    seqNum = *(ptk+1);
+}
+
+void CloseConnection::serialize()
+{
+    serializer<char>(type);
+    serializer<int>(seqNum);
+}
+
+void ReplyAck::deserialize(char * ptk)
+{
+    type = *ptk;
+}
+
+void ReplyAck::serialize()
+{
+    serializer<char>(type);
+
+}
 

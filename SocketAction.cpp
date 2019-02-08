@@ -4,10 +4,11 @@
 
 #include "SocketAction.h"
 #include <strings.h>
+#include <string>
 #include <iostream>
 using namespace std;
 
-void createAddress(struct sockaddr_in &addr, int port)
+void createAddress(struct sockaddr_in &addr, const int port)
 {
     bzero((char *) &addr, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -15,16 +16,36 @@ void createAddress(struct sockaddr_in &addr, int port)
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-char * receiveMessage(int sockId, struct sockaddr_in &addr, char buffer[])
+void createAddress2(struct sockaddr_in &addr, const int port)
 {
-    socklen_t len;
-    int n = ::recvfrom(sockId, (char *) buffer, 256, MSG_WAITALL, (struct sockaddr *) &addr, &len);
-    buffer[n] = '\0';
-    cout << "Received packet: " << to_string(*(buffer+1)) << endl;
-    return buffer;
+    bzero((char *) &addr, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = ntohs(port);
+    addr.sin_addr.s_addr = ntohl(INADDR_ANY);
 }
 
-int checkError(int value, string message)
+int receiveMessage(Packet & ptk, const int sockId, struct sockaddr_in &addr)
+{
+    socklen_t len = sizeof(struct sockaddr_in);
+    char temp[256];
+    int n = ::recvfrom(sockId, temp, 256, MSG_WAITALL, (struct sockaddr *) &addr, &len);
+    temp[n+1] = '\0';
+    checkError(n, "Error Recieving Message");
+    ptk.deserialize(temp);
+
+    cout << "Received packet. Type: " << ptk.Type() << endl;
+    return len;
+}
+
+int sendMessage(Packet &ptk, const struct sockaddr_in &addr, int serverSocket, int len)
+{
+    int status = ::sendto(serverSocket, ptk.SerialPacket(), ptk.Size(), 0, (const struct sockaddr *) &addr, len);
+    checkError(status, "Error Sending Message");
+    cout << "Message sent. Type: " << ptk.Type() << endl;
+    return 0;
+}
+
+int checkError(const int value, const string message)
 {
     if(value < 0)
     {
@@ -33,27 +54,6 @@ int checkError(int value, string message)
     }
     return 0;
 }
-
-int sendMessage(char *ptk, int ptkLen, struct sockaddr_in &addr, int serverSocket)
-{
-
-//    int secondParam;
-//    memcpy(&secondParam, (int *) packet+ 1, sizeof(secondParam));
-//    cout << "sec para m = " << secondParam << endl;
-    //cout << "Sending to port: " << addr.sin_port << endl;
-    int status = ::sendto(serverSocket, ptk, ptkLen, 0, (const struct sockaddr *) &addr, sizeof(addr));
-    if(status < 0)
-    {
-        cout << "Error sending message" << endl;
-        return 1;
-    }
-    else
-    {
-        cout << "Message sent" << endl;
-        return 0;
-    }
-}
-//sendMessage is in header file because it is a template function
 
 
 
