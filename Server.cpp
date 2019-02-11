@@ -21,52 +21,78 @@
 
 
 
-bool checkFile(string fileName)
+int checkFile(string fileName, long &fileSize)
 {
     ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.jpg", ios::binary);
 
     if(!file)
     {
         cout << "Could not open file specified." << endl;
-        return false;
+        return 0;
     }
+    //retrieve file size
+    file.seekg(0, file.end);
+    fileSize = file.tellg();
+
     file.close();
-    return true;
+    return 1;
 }
 
 
-bool readDataAndSend(int sockId, struct  sockaddr_in &cli_addr, string fileName, int len)
+bool readDataAndSend(int sockId, struct  sockaddr_in &cli_addr, string fileName, int len, long fileSize)
 {
     ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.jpg", ios::binary);
-    //ifstream file("/Users/benjaminmartinson/CLionProjects/ReliableProtocol/test.txt", ios::binary);
-    char buffer[1024];
+
+    char entireFile[fileSize];
+    file.read(entireFile, fileSize);
 
     int count = 0;
-    while(file.read(buffer, sizeof(buffer)))
+    int offset = 0;
+
+    int packetSize = 1024;
+    while(offset < fileSize)
     {
-        DataPacket dataPacket(count, sizeof(buffer), buffer);
+        //send packet of size 'packetSize' until remainder of file is less than that
+        packetSize = min(packetSize, (int)(fileSize-offset));
+        char packetData[packetSize];
+        memcpy(&packetData, entireFile+offset, packetSize);
+
+        DataPacket dataPacket(++count, packetSize, packetData);
         sendMessage(dataPacket, cli_addr, sockId, len);
+        offset += packetSize;
+
+        DataReply dataReply;
+        receiveMessage(dataReply, sockId, cli_addr);
+
+        if(count !=  dataReply.Seqnum())
+        {
+            cout << "Wrong number packet...." << dataReply.Seqnum() << endl;
+        }
 
     }
+    //close connection
+    CloseConnection closeConnection(19);
+    sendMessage(closeConnection, cli_addr, sockId, len);
+
     file.close();
     return true;
 }
 
 
-int establishConnection(int sockId, struct sockaddr_in &cli_addr, string &fileName)
+int establishConnection(int sockId, struct sockaddr_in &cli_addr, string &fileName, long &fileSize, int &len)
 {
     //listen for clients initial connection
     Connection connectionPacket;
-    int len = receiveMessage(connectionPacket, sockId, cli_addr);
+    len = receiveMessage(connectionPacket, sockId, cli_addr);
 
     fileName = connectionPacket.FileName();
-    if(connectionPacket.Type() != 'S' || !checkFile(fileName))
+    if(connectionPacket.Type() != 'S' || !checkFile(fileName, fileSize))
         return 0;
 
 
 
     //Reply that connection has been made
-    ConnectionReply connectionReply(1000);
+    ConnectionReply connectionReply(fileSize);
     sendMessage(connectionReply, cli_addr, sockId, len);
 
     ReplyAck replyAck;
@@ -75,12 +101,21 @@ int establishConnection(int sockId, struct sockaddr_in &cli_addr, string &fileNa
         return 0;
 
     //else connection was established
-    return len;
+    return 1;
+}
+
+void closeConnection(struct sockaddr_in &cli_addr, int socket)
+{
+    CloseConnection closeConnection(100);
+    receiveMessage(closeConnection, socket, cli_addr);
+    close(socket);
 }
 
 
 int main(int argc, char *argv[])
 {
+    string fileName = "";
+    long fileSize = 0;
 
     //setup socket
     int sockId, newsockId, port, n;
@@ -91,39 +126,24 @@ int main(int argc, char *argv[])
 
     //open socket
     sockId = socket(AF_INET, SOCK_DGRAM, 0);
-    checkError(sockId, "Error Opening Socket");
+    checkError((sockId < 0), "Error Opening Socket");
 
     createAddress2(serv_addr, port);
 
     //bind to port
     int status = ::bind(sockId, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
-    checkError(status, "Error Binding");
+    checkError((status < 0), "Error Binding");
     cout << endl << "Server running on port: " << argv[2] << endl;
 
     //start listening for client
-    string fileName = "";
-    int len = establishConnection(sockId, cli_addr, fileName);
-    if(fileName != "")
-        cout << "\nServer has connected with client " << port << endl;
-    else
-    {
-        cout << "\nServer could not connect with client! Socket closed at port: " << port << endl;
-        close(sockId);
-        return 1;
-    }
-
+    int len = 0;
+    int result = establishConnection(sockId, cli_addr, fileName, fileSize, len);
+    checkError(result == 0, "Server could not connect with client", "Server has connected with a client");
 
     //start sending file data
-    readDataAndSend(sockId, cli_addr, fileName, len);
-
-
-    //start sending data
-
-
-
-    close(sockId);
+    readDataAndSend(sockId, cli_addr, fileName, len, fileSize);
+    //close connection
+    closeConnection(cli_addr, sockId);
     return 0;
 
-
-    return 0;
 }

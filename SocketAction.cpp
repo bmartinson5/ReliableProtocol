@@ -27,10 +27,9 @@ void createAddress2(struct sockaddr_in &addr, const int port)
 int receiveMessage(Packet & ptk, const int sockId, struct sockaddr_in &addr)
 {
     socklen_t len = sizeof(struct sockaddr_in);
-    char temp[256];
-    int n = ::recvfrom(sockId, temp, 256, MSG_WAITALL, (struct sockaddr *) &addr, &len);
-    temp[n+1] = '\0';
-    checkError(n, "Error Recieving Message");
+    char temp[2000];
+    int n = ::recvfrom(sockId, temp, 2000, MSG_WAITALL, (struct sockaddr *) &addr, &len);
+    checkError((n<0), "Error Recieving Message");
     ptk.deserialize(temp);
 
     cout << "Received packet. Type: " << ptk.Type() << endl;
@@ -40,17 +39,24 @@ int receiveMessage(Packet & ptk, const int sockId, struct sockaddr_in &addr)
 int sendMessage(Packet &ptk, const struct sockaddr_in &addr, int serverSocket, int len)
 {
     int status = ::sendto(serverSocket, ptk.SerialPacket(), ptk.Size(), 0, (const struct sockaddr *) &addr, len);
-    checkError(status, "Error Sending Message");
+    checkError((status < 0), "Error Sending Message");
     cout << "Message sent. Type: " << ptk.Type() << endl;
     return 0;
 }
 
-int checkError(const int value, const string message)
+
+
+int checkError(bool condition, const string errorMessage, string message)
 {
-    if(value < 0)
+    if(condition)
     {
-        cout << message << endl;
+        cout << errorMessage << endl;
         exit(1);
+    }
+    else
+    {
+        if(message != "") message += '\n';
+        cout << message;
     }
     return 0;
 }

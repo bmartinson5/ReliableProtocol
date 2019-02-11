@@ -5,12 +5,16 @@
 #include "Packet.h"
 #include <iostream>
 #include <string>
+#include <stdio.h>
+
+
 
 void Connection::deserialize(char * ptk)
 {
-    type = *ptk;
-    ptkLength = *(ptk+sizeof(char));
-    fileName = (ptk+sizeof(char)+sizeof(int));
+    deserializer(&type, ptk, sizeof(char));
+    deserializer(&ptkLength, ptk, sizeof(int));
+    deserializer(&fileName, ptk, ptkLength);
+
 }
 
 void Connection::serialize()
@@ -22,8 +26,10 @@ void Connection::serialize()
 
 void ConnectionReply::deserialize(char * ptk)
 {
-    type = *ptk;
-    fileSize = *(ptk+1);
+    deserializer(&type, ptk, sizeof(char));
+    deserializer(&fileSize, ptk, sizeof(long));
+    cout << "fileseive  = " << fileSize << endl;
+
 }
 
 void ConnectionReply::serialize()
@@ -34,10 +40,12 @@ void ConnectionReply::serialize()
 
 void DataPacket::deserialize(char * ptk)
 {
-    type = *ptk;
-    seqNum = *(ptk+1);
-    pktLength = *(ptk+1+ sizeof(int));
-    data = (ptk+1+ sizeof(int)+sizeof(int));
+    deserializer(&type, ptk, sizeof(char));
+    deserializer(&seqNum, ptk, sizeof(int));
+    deserializer(&pktLength, ptk, sizeof(int));
+    data = new char[pktLength];
+    memcpy(data, ptk+offset, pktLength);
+
 }
 
 void DataPacket::serialize()
@@ -45,27 +53,26 @@ void DataPacket::serialize()
     serializer<char>(type);
     serializer<int>(seqNum);
     serializer<int>(pktLength);
-    serializer<string>(data, pktLength);
-    //cout << "packet = " << (pack + 9) << endl;
-    //also need data
+    memcpy(pack+offset, data,pktLength);
 }
 
 void DataReply::deserialize(char * ptk)
 {
-    type = *ptk;
-    seqNum = *(ptk+1);
+    deserializer(&type, ptk, sizeof(char));
+    deserializer(&seqNum, ptk, sizeof(int));
 }
 
 void DataReply::serialize()
 {
     serializer<char>(type);
     serializer<int>(seqNum);
+    cout << "seqnum = " << seqNum << endl;
 }
 
 void CloseConnection::deserialize(char * ptk)
 {
-    type = *ptk;
-    seqNum = *(ptk+1);
+    deserializer(&type, ptk, sizeof(char));
+    deserializer(&seqNum, ptk, sizeof(int));
 }
 
 void CloseConnection::serialize()

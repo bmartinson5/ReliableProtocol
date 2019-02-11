@@ -14,7 +14,7 @@ using namespace std;
 void createAddress(struct sockaddr_in &addr, const int port);
 void createAddress2(struct sockaddr_in &addr, const int port);
 int receiveMessage(Packet &, const int sockId, struct sockaddr_in &addr);
-int checkError(const int, const string);
+int checkError(bool, const string, string message = "");
 int sendMessage(Packet&, const struct sockaddr_in&, const int serverSocket, int);
 
 

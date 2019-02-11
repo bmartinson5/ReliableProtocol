@@ -38,8 +38,8 @@ public:
     const char* SerialPacket() {return pack;};
 
     //virtual function
-    virtual void serialize() = 0;
-    virtual void deserialize(char *) = 0;
+    virtual void serialize() {};
+    virtual void deserialize(char *) {};
 
     //
 
@@ -59,6 +59,13 @@ public:
         offset += sizeT;
     }
 
+    void deserializer(void* copyTo, char * toCopy, int sizeT)
+    {
+        memcpy(copyTo, toCopy+offset, sizeT);
+        offset += sizeT;
+    }
+
+
 
     ~Packet()
     {
@@ -76,7 +83,7 @@ private:
 public:
     Connection() : Packet (){};
 
-    Connection(int ptkL, string file) : Packet('S', sizeof(int) + file.length()+1), ptkLength(file.length()+1)
+    Connection(int pktL, string file) : Packet('S', sizeof(int) + pktL+1), ptkLength(pktL+1)
     {
         fileName.assign(file);
         serialize();
@@ -92,9 +99,11 @@ class ConnectionReply: public Packet
 private:
     long fileSize;
 public:
+    ConnectionReply(): Packet('R'){};
     ConnectionReply(long fileS): Packet('R', sizeof(long)), fileSize(fileS) { serialize(); };
     void serialize() override;
     void deserialize(char *) override;
+    long FileSize() { return fileSize;};
 };
 
 class ReplyAck : public Packet
@@ -116,12 +125,23 @@ private:
 
 public:
     DataPacket(): Packet('D'){};
-    DataPacket(int num, int ptkL, char *d): Packet('D', sizeof(int)*2+ptkL), seqNum(num), pktLength(ptkL), data(d)
+    DataPacket(int num, int ptkL, char *d): Packet('D', sizeof(int)*2+ptkL), seqNum(num), pktLength(ptkL)
     {
+        data = new char[pktLength];
+        memcpy(data, d, pktLength);
         serialize();
     };
+
+    ~DataPacket()
+    {
+        delete [] data;
+    }
+
     void serialize() override;
     void deserialize(char *) override;
+    int PktLength(){ return pktLength;}
+    char* Data() { return data; }
+    int Seqnum() { return seqNum; }
 
 };
 
@@ -130,9 +150,11 @@ class DataReply : public Packet
 private:
     int seqNum;
 public:
-    DataReply(int num): Packet('A'), seqNum(num) {};
+    DataReply(): Packet('A') {};
+    DataReply(int num): Packet('A', sizeof(int)), seqNum(num) { serialize(); }
     void serialize() override;
     void deserialize(char *) override;
+    int Seqnum() { return seqNum; }
 };
 
 class CloseConnection : public Packet
@@ -140,7 +162,7 @@ class CloseConnection : public Packet
 private:
     int seqNum;
 public:
-    CloseConnection(int num): Packet('C'), seqNum(num) {};
+    CloseConnection(int num): Packet('C', sizeof(int)), seqNum(num) {};
     void serialize() override;
     void deserialize(char *) override;
 
